@@ -15,40 +15,43 @@ const app = express();
 // Specify our > 1024 port to run on
 const port = 3000;
 
+let idTraker = 1
+
 // Apply our middleware so our code can natively handle JSON easily
 app.use(bodyParser.json());
 
 // We must have our list of programmers to use
 if (!fs.existsSync('./programmers.json')) {
-  throw new Error('Could not find database of programmers!');
+	throw new Error('Could not find database of programmers!');
 }
 
 // Build our routes
 
 app.get('/', (req, res) => {
-  res.send('Fill me in to return ALL programmers!');
+	res.send(JSON.stringify(database));
 });
 
 app.get('/:id', (req, res) => {
-  const id = req.params.id;
-
-  res.send(`Fill me in to return values with ID: ${id}`);
+	const id = req.params.id;
+	res.send(`Fill me in to return values with ID: ${id}`);
 });
 
 app.put('/:id', (req, res) => {
-  const id = req.params.id;
+	const id = req.params.id;
 
-  res.send(`Fill me in to update values with ID: ${id}`);
+	res.send(`Fill me in to update values with ID: ${id}`);
 });
 
 app.post('/', (req, res) => {
-  const body = req.body; // Hold your JSON in here!
+	const body = req.body; // Hold your JSON in here!
 
-  res.send(`You sent: ${body}`);
+	database[idTraker] = body 
+	idTraker++
+	res.send(JSON.stringify(body));
 });
 
 // IMPLEMENT A ROUTE TO HANDLE ALL OTHER ROUTES AND RETURN AN ERROR MESSAGE
 
 app.listen(port, () => {
-  console.log(`She's alive on port ${port}`);
+	console.log(`She's alive on port ${port}`);
 });
