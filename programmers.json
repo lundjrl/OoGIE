@@ -1,5 +1,6 @@
-{
-	"0":{
+
+[
+	{
 		"firstName": "jeff",
 		"lastName": "burt",
 		"homeAddress": "1234 Mayberry Lane",
@@ -29,4 +30,4 @@
 			]
 		}
 	}
-}
+]

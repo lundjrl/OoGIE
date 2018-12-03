@@ -10,12 +10,24 @@ const fs = require('fs');
 // object
 const database = require('./programmers.json');
 
+const template = {
+	"firstName": "",
+	"lastName": "",
+	"homeAddress": "",
+	"SID": "",
+	"goodSlave": "",
+	"beatingsToDate":"" ,
+	"family": {
+		"wife": {},
+		"husband": {},
+		"children": []
+	}
+}
+
 // Make an instance of our express application
 const app = express();
 // Specify our > 1024 port to run on
 const port = 3000;
-
-let idTraker = 1
 
 // Apply our middleware so our code can natively handle JSON easily
 app.use(bodyParser.json());
@@ -28,16 +40,35 @@ if (!fs.existsSync('./programmers.json')) {
 // Build our routes
 
 app.get('/', (req, res) => {
-	res.send(JSON.stringify(database));
+	res.json(database);
 });
 
 app.get('/:id', (req, res) => {
-	const id = req.params.id;
-	res.send(`Fill me in to return values with ID: ${id}`);
+	const { id } = req.params;
+	const found = database.find(record => record.SID === id);
+	if (found)
+		res.json(found)
+	else
+		res.send(`id: ${id} is not here`);
 });
 
 app.put('/:id', (req, res) => {
 	const id = req.params.id;
+	let index;	
+	const found = database.map((user, idx) => {
+		if(user.SID === id){
+			index = idx
+		}
+	});
+
+	if (found){
+		const updatedUser = {...database[index], ...req.body};
+
+		database[index] = updatedUser; 
+		res.json(updatedUser);
+	}else{
+		res.send(`id: ${id} is not here`);
+	}
 
 	res.send(`Fill me in to update values with ID: ${id}`);
 });
@@ -45,13 +76,16 @@ app.put('/:id', (req, res) => {
 app.post('/', (req, res) => {
 	const body = req.body; // Hold your JSON in here!
 
-	database[idTraker] = body 
-	idTraker++
-	res.send(JSON.stringify(body));
+	database.push(body); 
+	res.json(body);
 });
 
 // IMPLEMENT A ROUTE TO HANDLE ALL OTHER ROUTES AND RETURN AN ERROR MESSAGE
 
+app.all('*', (req, res) => res.json('Error! Invalid route'));
+
 app.listen(port, () => {
 	console.log(`She's alive on port ${port}`);
 });
+
+
